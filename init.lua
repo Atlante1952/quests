@@ -1,5 +1,3 @@
-local S = minetest.get_translator("daily_quest") -- [Ru,Es,Fr,En,De,It]
-
 local quests = {
     {Name="Collect Stone", Target="default:stone", Quant=30, Desc="Dig in the mine 30 stone blocks.", Rewards={ "default:steel_ingot 5", "default:steel_ingot 3" }, Dif="1", Event="on_dignode"},
     {Name="Build a Castle", Target="default:stonebrick", Quant=10, Desc="Place 10 stonebrick.", Rewards={ "default:sword_steel 3", "default:steel_ingot 3" }, Dif="1", Event="on_placenode"},
@@ -32,8 +30,6 @@ local function assign_random_quest(player)
         player_meta:set_string("quest_event_type", random_quest.Event)
 
         player_meta:set_int("has_quest", 1)
-
-        minetest.chat_send_player(player:get_player_name(), S("Vous avez recus une nouvelle quetes! ") .. random_quest.Name)
     end
 end
 
@@ -80,7 +76,7 @@ local function update_quest_progress(player, node_name, event_type, crafted_item
         player_meta:set_int("quest_progress", current_progress)
 
         if current_progress >= quest_Quant then
-            minetest.chat_send_player(player:get_player_name(), S("Quest Completed: ") .. player_meta:get_string("quest_name"))
+            minetest.chat_send_player(player:get_player_name(), "Quest Completed: " .. player_meta:get_string("quest_name"))
 
             local rewards = player_meta:get_string("quest_rewards")
             local reward_items = string.split(rewards, ",")
@@ -96,13 +92,13 @@ local function update_quest_progress(player, node_name, event_type, crafted_item
             assign_random_quest(player)
             update_ranking(player:get_player_name())
         else
-            --minetest.chat_send_player(player:get_player_name(), S("Quest Progress: ") .. current_progress .. "/" .. quest_Quant)
+            --minetest.chat_send_player(player:get_player_name(), "Quest Progress: " .. current_progress .. "/" .. quest_Quant)
         end
     end
 end
 
 minetest.register_chatcommand("quest", {
-    Desc = S("View your active quest"),
+    Desc = "View your active quest",
     privs = { interact = true },
     func = function(name, param)
         local player = minetest.get_player_by_name(name)
@@ -123,7 +119,7 @@ minetest.register_chatcommand("quest", {
             player_meta:get_string("quest_event_type")
 
         local formspec = "size[8,9]" ..
-            "label[0,0;" .. minetest.colorize("#FFA500", S("--------Quest Information--------")) .. "]"
+            "label[0,0;" .. minetest.colorize("#FFA500", "--------Quest Information--------") .. "]"
 
         for i = 0, 7 do
             formspec = formspec .. "image[" .. i .. ",5.2;1,1;gui_hb_bg.png]"
@@ -131,12 +127,12 @@ minetest.register_chatcommand("quest", {
 
         formspec = formspec ..
             'item_image_button[4.0,0;1,1;' .. quest_target .. ';target_button;]' ..
-            "label[0,0.5;" .. S("Name: ") .. quest_name .. "]" ..
-            "label[0,1;" .. S("Target: ") .. quest_target .. "]" ..
-            "label[0,1.5;" .. S("Quant: ") .. quest_Quant .. "]" ..
-            "label[0,2;" .. S("Desc: ") .. quest_Desc .. "]" ..
-            "label[0,2.5;" .. S("Event: ") .. quest_event_type .. "]" ..
-            "label[0,3;" .. S("Progress: ") .. quest_progress .. "/" .. quest_Quant .. "]"
+            "label[0,0.5;" .. "Name: " .. quest_name .. "]" ..
+            "label[0,1;" .. "Target: " .. quest_target .. "]" ..
+            "label[0,1.5;" .. "Quantity: " .. quest_Quant .. "]" ..
+            "label[0,2;" .. "Description: " .. quest_Desc .. "]" ..
+            "label[0,2.5;" .. "EventType: " .. quest_event_type .. "]" ..
+            "label[0,3;" .. "Progress: " .. quest_progress .. "/" .. quest_Quant .. "]"
 
         local reward_x = 0
         for _, reward in ipairs(quests[has_quest].Rewards) do
@@ -149,7 +145,7 @@ minetest.register_chatcommand("quest", {
         formspec = formspec ..
             "list[current_player;main;0,5.2;8,1;]" ..
             "list[current_player;main;0,6.35;8,3;8]" ..
-            "button[5.25,2;2.5,3;give_for_quest;" .. S("Give For Quest") .. "]" ..
+            "button[5.25,2;2.5,3;give_for_quest;" .. "Give For Quest" .. "]" ..
             "list[current_player;give_for_quest;5,0;3,3;]" ..
             "listring[current_player;main]" ..
             "listring[current_player;give_for_quest]" ..
@@ -162,7 +158,7 @@ minetest.register_chatcommand("quest", {
 
 if minetest.get_modpath("sfinv") then
     sfinv.register_page("sfinv:daily_quest", {
-        title = S("Quest"),
+        title = "Quest",
         get = function(self, player, context)
             local player_name = player:get_player_name()
             local player_meta = minetest.get_player_by_name(player_name):get_meta()
@@ -177,7 +173,7 @@ if minetest.get_modpath("sfinv") then
                     player_meta:get_string("quest_event_type")
 
                 local formspec = "size[8,9]" ..
-                    "label[0,0;" .. minetest.colorize("#FFA500", S("--------Quest Information--------")) .. "]"
+                    "label[0,0;" .. minetest.colorize("#FFA500","--------Quest Information--------") .. "]"
 
                 for i = 0, 7 do
                     formspec = formspec .. "image[" .. i .. ",5.2;1,1;gui_hb_bg.png]"
@@ -185,12 +181,12 @@ if minetest.get_modpath("sfinv") then
 
                 formspec = formspec ..
                     'item_image_button[4.0,0;1,1;' .. quest_target .. ';target_button;]' ..
-                    "label[0,0.5;" .. S("Name: ") .. quest_name .. "]" ..
-                    "label[0,1;" .. S("Target: ") .. quest_target .. "]" ..
-                    "label[0,1.5;" .. S("Quant: ") .. quest_Quant .. "]" ..
-                    "label[0,2;" .. S("Desc: ") .. quest_Desc .. "]" ..
-                    "label[0,2.5;" .. S("Event: ") .. quest_event_type .. "]" ..
-                    "label[0,3;" .. S("Progress: ") .. quest_progress .. "/" .. quest_Quant .. "]"
+                    "label[0,0.5;" .. "Name: " .. quest_name .. "]" ..
+                    "label[0,1;" .. "Target: " .. quest_target .. "]" ..
+                    "label[0,1.5;" .. "Quantity: " .. quest_Quant .. "]" ..
+                    "label[0,2;" .. "Description: " .. quest_Desc .. "]" ..
+                    "label[0,2.5;" .. "EventType: " .. quest_event_type .. "]" ..
+                    "label[0,3;" .. "Progress: " .. quest_progress .. "/" .. quest_Quant .. "]"
 
                 local reward_x = 0
                 for _, reward in ipairs(quests[has_quest].Rewards) do
@@ -203,7 +199,7 @@ if minetest.get_modpath("sfinv") then
                 formspec = formspec ..
                     "list[current_player;main;0,5.2;8,1;]" ..
                     "list[current_player;main;0,6.35;8,3;8]" ..
-                    "button[5.25,2;2.5,3;give_for_quest;" .. S("Give For Quest") .. "]" ..
+                    "button[5.25,2;2.5,3;give_for_quest;" .. "Give For Quest" .. "]" ..
                     "list[current_player;give_for_quest;5,0;3,3;]" ..
                     "listring[current_player;main]" ..
                     "listring[current_player;give_for_quest]" ..
@@ -236,19 +232,19 @@ if minetest.get_modpath("unified_inventory") then
 
         local formspec = perplayer_formspec.standard_inv_bg ..
             perplayer_formspec.standard_inv ..
-            "label[0.5,0.5;" .. minetest.colorize("#FFA500", S("--------Quest Information--------")) .. "]"
+            "label[0.5,0.5;" .. minetest.colorize("#FFA500", "--------Quest Information--------") .. "]"
 
         if quest_target then
             formspec = formspec .. 'item_image_button[5,0.25;1,1;' .. quest_target .. ';target_button;]'
         end
 
         formspec = formspec ..
-            "label[0.5,1;" .. S("Name: ") .. quest_name .. "]" ..
-            "label[0.5,1.5;" .. S("Target: ") .. (quest_target or "") .. "]" ..
-            "label[0.5,2;" .. S("Quant: ") .. quest_Quant .. "]" ..
-            "label[0.5,2.5;" .. S("Desc: ") .. quest_Desc .. "]" ..
-            "label[0.5,3;" .. S("Event: ") .. quest_event_type .. "]" ..
-            "label[0.5,3.5;" .. S("Progress: ") .. quest_progress .. "/" .. quest_Quant .. "]"
+            "label[0.5,1;" .. "Name: " .. quest_name .. "]" ..
+            "label[0.5,1.5;" .. "Target: " .. (quest_target or "") .. "]" ..
+            "label[0.5,2;" .. "Quantity: " .. quest_Quant .. "]" ..
+            "label[0.5,2.5;" .. "Description: " .. quest_Desc .. "]" ..
+            "label[0.5,3;" .. "EventType: " .. quest_event_type .. "]" ..
+            "label[0.5,3.5;" .. "Progress: " .. quest_progress .. "/" .. quest_Quant .. "]"
 
         local reward_x = 0.5
         if quests and quests[has_quest] and quests[has_quest].Rewards then
@@ -262,7 +258,7 @@ if minetest.get_modpath("unified_inventory") then
 
         formspec = formspec ..
         ui.make_inv_img_grid(6.45, 0.25, 3, 3) ..
-            "button[7,4.5;2.5,1;give_for_quest;" .. S("Give For Quest") .. "]" ..
+            "button[7,4.5;2.5,1;give_for_quest;" .. "Give For Quest" .. "]" ..
             "list[current_player;give_for_quest;6.6,0.375;3,3;]"
 
         return { formspec = formspec }
@@ -271,7 +267,7 @@ if minetest.get_modpath("unified_inventory") then
     ui.register_button("daily_quest", {
         type = "image",
         image = "daily_quest_icon.png",
-        tooltip = S("Daily Quest"),
+        tooltip = "Daily Quest",
     })
 
     ui.register_page("daily_quest", {
@@ -385,7 +381,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
                 end
 
                 if new_progress >= quest_Quant then
-                    minetest.chat_send_player(player_name, S("Quest Completed: ") .. player_meta:get_string("quest_name"))
+                    minetest.chat_send_player(player_name, "Quest Completed: " .. player_meta:get_string("quest_name"))
 
                     local rewards = player_meta:get_string("quest_rewards")
                     local reward_items = string.split(rewards, ",")
@@ -399,21 +395,17 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
                     player_meta:set_int("quest_progress", 0)
 
                     assign_random_quest(player)
-                else
-                    minetest.chat_send_player(player_name, S("Donation added to quest progress. Current progress: ") .. new_progress .. "/" .. quest_Quant)
                 end
-            else
-                minetest.chat_send_player(player_name, S("This quest cannot be completed by giving items."))
             end
         else
-            minetest.chat_send_player(player_name, S("You don't have an active quest."))
+            minetest.chat_send_player(player_name, "You don't have an active quest.")
         end
     end
 end)
 
 minetest.register_chatcommand("ranking", {
     params = "",
-    description = "Affiche le classement des joueurs avec le plus de quêtes accomplies.",
+    description = "Shows the ranking of players with the most completed quests.",
     func = function(name, param)
         local ranking_file = io.open(ranking_file_path, "r")
         if ranking_file then
@@ -433,7 +425,7 @@ minetest.register_chatcommand("ranking", {
 
             local formspec = "size[6.25,8]bgcolor[#00000000;true]background[0,0;6.25,8;gui_formbg.png;true]"
 
-            formspec = formspec .. "label[1,0;" .. minetest.colorize("#FFA500", S("--------Player Ranking--------")) .. "]"
+            formspec = formspec .. "label[1,0;" .. minetest.colorize("#FFA500", "--------Player Ranking--------") .. "]"
 
             local num_players_to_display = #sorted_ranking
 
@@ -456,11 +448,11 @@ minetest.register_chatcommand("ranking", {
                 end
             end
 
-            formspec = formspec .. "label[0,7;Vous avez accompli " .. (ranking_data[name] or 0) .. " quêtes. \nVotre classement : " .. (player_rank and player_rank or "Non classé") .. "]"
+            formspec = formspec .. "label[0,7;You have accomplished " .. (ranking_data[name] or 0) .. " quests. \nYour ranking : " .. (player_rank and player_rank or "Unclassified") .. "]"
 
             minetest.show_formspec(name, "ranking_interface", formspec)
         else
-            minetest.chat_send_player(name, "Impossible de lire le fichier de classement.")
+            minetest.chat_send_player(name, "Failed to read rating file.")
         end
     end,
 })
@@ -468,7 +460,7 @@ minetest.register_chatcommand("ranking", {
 
 if minetest.get_modpath("sfinv") then
     sfinv.register_page("sfinv:ranking", {
-        title = S("Ranking"),
+        title = "Ranking",
         get = function(self, player, context)
             local player_name = player:get_player_name()
             local ranking_file = io.open(minetest.get_worldpath() .. "/ranking.txt", "r")
@@ -489,7 +481,7 @@ if minetest.get_modpath("sfinv") then
                 end)
 
                 local formspec = "size[8,9]bgcolor[#00000000;true]background[0,0;8,9;gui_formbg.png;true]" ..
-                    "label[0,0;" .. minetest.colorize("#FFA500", S("--------Player Ranking--------")) .. "]"
+                    "label[0,0;" .. minetest.colorize("#FFA500", "--------Player Ranking--------") .. "]"
 
                 local num_players_to_display = #sorted_ranking
 
@@ -549,7 +541,7 @@ if minetest.get_modpath("unified_inventory") then
 
             local formspec = perplayer_formspec.standard_inv_bg ..
                 perplayer_formspec.standard_inv ..
-                "label[0.5,0.5;" .. minetest.colorize("#FFA500", S("--------Player Ranking--------")) .. "]"
+                "label[0.5,0.5;" .. minetest.colorize("#FFA500", "--------Player Ranking--------") .. "]"
 
             local num_players_to_display = #sorted_ranking
 
@@ -588,7 +580,7 @@ if minetest.get_modpath("unified_inventory") then
     ui.register_button("ranking", {
         type = "image",
         image = "ranking_icon.png",
-        tooltip = S("Player Ranking"),
+        tooltip = "Player Ranking",
         action = function(player)
             ui.set_inventory_formspec(player, "ranking")
         end,
